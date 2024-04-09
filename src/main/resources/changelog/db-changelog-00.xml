@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+
+    <changeSet id="1" author="luizpadilha">
+        <createTable tableName="users">
+            <column name="id" type="${id}">
+                <constraints primaryKey="true" primaryKeyName="pk_user"/>
+            </column>
+            <column name="login" type="${descricaomedia}"/>
+            <column name="password" type="${descricaomedia}"/>
+            <column name="role" type="${descricaocurta}"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="2" author="luizpadilha">
+        <createTable tableName="pessoa">
+            <column name="id" type="${id}">
+                <constraints primaryKey="true" primaryKeyName="pk_pessoa"/>
+            </column>
+            <column name="nome" type="${descricaomedia}"/>
+            <column name="numero" type="${descricaocurta}"/>
+            <column name="user_id" type="${id}"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="3" author="luizpadilha">
+        <addForeignKeyConstraint baseTableName="pessoa"
+                                 baseColumnNames="user_id"
+                                 constraintName="fk_pessoa_users"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    <changeSet id="4" author="luizpadilha">
+        <createTable tableName="servico">
+            <column name="id" type="${id}">
+                <constraints primaryKey="true" primaryKeyName="pk_servico"/>
+            </column>
+            <column name="descricao" type="${descricaomedia}"/>
+            <column name="preco" type="${decimal}"/>
+            <column name="user_id" type="${id}"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="5" author="luizpadilha">
+        <addForeignKeyConstraint baseTableName="servico"
+                                 baseColumnNames="user_id"
+                                 constraintName="fk_servico_users"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    <changeSet id="6" author="luizpadilha">
+        <createTable tableName="notificacao">
+            <column name="id" type="${id}">
+                <constraints primaryKey="true" primaryKeyName="pk_notificacao"/>
+            </column>
+            <column name="titulo" type="${descricaomedia}"/>
+            <column name="descricao" type="${descricaolonga}"/>
+            <column name="user_id" type="${id}"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="7" author="luizpadilha">
+        <addForeignKeyConstraint baseTableName="notificacao"
+                                 baseColumnNames="user_id"
+                                 constraintName="fk_notificacao_users"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    <changeSet id="8" author="luizpadilha">
+        <createTable tableName="agenda">
+            <column name="id" type="${id}">
+                <constraints primaryKey="true" primaryKeyName="pk_agenda"/>
+            </column>
+            <column name="horario" type="${datahora}"/>
+            <column name="pessoa_id" type="${id}"/>
+            <column name="servico_id" type="${id}"/>
+            <column name="user_id" type="${id}"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="9" author="luizpadilha">
+        <addForeignKeyConstraint baseTableName="agenda"
+                                 baseColumnNames="pessoa_id"
+                                 constraintName="fk_agenda_pessoa"
+                                 referencedTableName="pessoa"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    <changeSet id="10" author="luizpadilha">
+        <addForeignKeyConstraint baseTableName="agenda"
+                                 baseColumnNames="servico_id"
+                                 constraintName="fk_agenda_servico"
+                                 referencedTableName="servico"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    <changeSet id="11" author="luizpadilha">
+        <addForeignKeyConstraint baseTableName="agenda"
+                                 baseColumnNames="user_id"
+                                 constraintName="fk_agenda_users"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    <changeSet id="12" author="luizpadilha">
+        <sqlFile path="changelog/sql/insert-user.sql"/>
+    </changeSet>
+</databaseChangeLog>
