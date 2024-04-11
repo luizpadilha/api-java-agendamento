@@ -1,5 +1,6 @@
 package com.apimybarber.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -19,6 +20,7 @@ public class Notificacao {
     private String id;
     private String titulo;
     private String descricao;
+    @JsonIgnore
     @ManyToOne
     private User user;
 

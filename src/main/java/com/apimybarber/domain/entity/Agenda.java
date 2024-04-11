@@ -1,5 +1,6 @@
 package com.apimybarber.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,6 +22,7 @@ public class Agenda {
     private Pessoa pessoa;
     @ManyToOne
     private Servico servico;
+    @JsonIgnore
     @ManyToOne
     private User user;
     private LocalDateTime horario;

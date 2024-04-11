@@ -1,5 +1,6 @@
 package com.apimybarber.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,6 +18,7 @@ public class Pessoa {
     private String id;
     private String nome;
     private String numero;
+    @JsonIgnore
     @ManyToOne
     private User user;
 }

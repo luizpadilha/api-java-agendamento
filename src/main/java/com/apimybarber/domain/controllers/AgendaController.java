@@ -56,13 +56,13 @@ public class AgendaController {
             User user = userService.buscar(data.userId());
             if (user == null) return ResponseEntity.status(402).build();
             Agenda agenda = service.buscar(data.id());
-            Pessoa pessoa = pessoaService.buscar(data.pessoaVO().id());
-            Servico servico = servicoService.buscar(data.servicoVO().id());
+            Pessoa pessoa = pessoaService.buscar(data.pessoa().id());
+            Servico servico = servicoService.buscar(data.servico().id());
             if (pessoa == null) {
-                pessoa = new Pessoa(data.id(), data.pessoaVO().nome(), data.pessoaVO().numero(), user);
+                pessoa = new Pessoa(data.id(), data.pessoa().nome(), data.pessoa().numero(), user);
             }
             if (servico == null) {
-                servico = new Servico(data.id(), data.servicoVO().descricao(), data.servicoVO().preco(), user);
+                servico = new Servico(data.id(), data.servico().descricao(), data.servico().preco(), user);
             }
             DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
             LocalDateTime horario = LocalDateTime.parse(data.horarioToIso8601(), formatter);
