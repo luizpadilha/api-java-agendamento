@@ -8,8 +8,8 @@ import com.apimybarber.domain.services.AgendaService;
 import com.apimybarber.domain.services.PessoaService;
 import com.apimybarber.domain.services.ServicoService;
 import com.apimybarber.domain.services.UserService;
+import com.apimybarber.domain.utils.LocalDateUtils;
 import com.apimybarber.domain.viewobject.AgendaVO;
-import com.apimybarber.domain.viewobject.PessoaVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +17,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -39,9 +39,10 @@ public class AgendaController {
 
 
     @GetMapping(value = "/agendas")
-    public ResponseEntity<List<Agenda>> agendas(@RequestParam String userId) {
+    public ResponseEntity<List<Agenda>> agendas(@RequestParam String userId, @RequestParam String data) {
         try {
-            List<Agenda> agendas = service.findAllByUser_Id(userId);
+            LocalDate dataFiltro = LocalDateUtils.getLocalDateIso(data);
+            List<Agenda> agendas = service.findAllByUser_Id(userId, dataFiltro);
             return ResponseEntity.ok(agendas);
         } catch (Exception e) {
             logger.error("Erro: ", e);
@@ -64,8 +65,7 @@ public class AgendaController {
             if (servico == null) {
                 servico = new Servico(data.id(), data.servico().descricao(), data.servico().preco(), user);
             }
-            DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-            LocalDateTime horario = LocalDateTime.parse(data.horarioToIso8601(), formatter);
+            LocalDateTime horario = LocalDateUtils.getLocalDateTimeIso(data.horarioToIso8601());
             if (agenda == null) {
                 agenda = new Agenda(data.id(), pessoa, servico, user, horario);
             } else {
@@ -82,9 +82,9 @@ public class AgendaController {
     }
 
     @PostMapping(value = "/remover-agenda")
-    public ResponseEntity<Void> removerAgenda(@RequestParam String pessoaId) {
+    public ResponseEntity<Void> removerAgenda(@RequestParam String agendaId) {
         try {
-            service.excluir(pessoaId);
+            service.excluir(agendaId);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             logger.error("Erro: ", e);
