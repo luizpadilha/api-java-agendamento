@@ -32,3 +32,20 @@ Endpoint para autenticar usuários e obter token JWT.
 ## Pré-requisitos
 
 - java SDK: 17
+## Testes Automatizados
+
+## JUnit5
+
+O JUnit é um framework de testes automatizados para a linguagem Java, e nesse projeto estamos utilizando o JUnit 5.
+Ele fornece uma série de anotações, classes e métodos auxiliares para facilitar a criação e execução de testes.
+A documentação oficial do JUnit pode ser encontrada [aqui](https://junit.org/junit5/docs/current/user-guide/).
+
+## Geração de Relatório de Cobertura com JaCoCo
+
+O JaCoCo é uma ferramenta de análise de cobertura de testes para a plataforma Java. Ele permite medir a porcentagem de código coberta pelos testes automatizados, identificando as partes do código que não foram testadas.
+
+### Passo a Passo para Gerar o Relatório de Cobertura
+
+1. Execute os testes automatizados [maven > lifecycle > verify].
+
+2. Acesse o relatório de cobertura. Abra o arquivo `index.html` localizado no diretório `target/site/jacoco` do projeto em um navegador web.
