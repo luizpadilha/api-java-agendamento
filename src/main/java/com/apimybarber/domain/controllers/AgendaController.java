@@ -42,7 +42,7 @@ public class AgendaController {
     public ResponseEntity<List<Agenda>> agendas(@RequestParam String userId, @RequestParam String data) {
         try {
             LocalDate dataFiltro = LocalDateUtils.getLocalDateIso(data);
-            List<Agenda> agendas = service.findAllByUser_Id(userId, dataFiltro);
+            List<Agenda> agendas = service.findAllByUserIdAndHorario(userId, dataFiltro);
             return ResponseEntity.ok(agendas);
         } catch (Exception e) {
             logger.error("Erro: ", e);

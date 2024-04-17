@@ -16,8 +16,8 @@ public class AgendaService extends AbstractService<Agenda> {
     @Autowired
     private AgendaRepository repository;
 
-    public List<Agenda> findAllByUser_Id(String username, LocalDate horario) {
-        return repository.findAllByUser_IdAndHorario_Date(username, LocalDateUtils.getDataFormatada(horario));
+    public List<Agenda> findAllByUserIdAndHorario(String username, LocalDate horario) {
+        return repository.findAllByUserIdAndHorario(username, LocalDateUtils.getDataFormatada(horario));
     }
 
     @Override
