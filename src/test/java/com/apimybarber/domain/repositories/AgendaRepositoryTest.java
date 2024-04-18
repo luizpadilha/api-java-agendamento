@@ -1,9 +1,8 @@
-package com.apimybarber.unit.repositories;
+package com.apimybarber.domain.repositories;
 
 import com.apimybarber.domain.entity.Agenda;
 import com.apimybarber.domain.entity.User;
 import com.apimybarber.domain.entity.UserRole;
-import com.apimybarber.domain.repositories.AgendaRepository;
 import com.apimybarber.domain.utils.LocalDateUtils;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;

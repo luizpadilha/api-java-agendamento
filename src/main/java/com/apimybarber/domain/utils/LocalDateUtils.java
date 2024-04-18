@@ -7,43 +7,52 @@ import java.time.format.DateTimeFormatter;
 
 public class LocalDateUtils {
 
-    public static String getDataFormatada(LocalDate data) {
+    public static String getDataFormatada(LocalDate localDate) {
         try {
-            if (data == null) {
+            if (localDate == null) {
                 return "";
             }
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            return data.format(formatter);
+            return localDate.format(formatter);
         } catch (Exception e) {
             throw new RuntimeException("Erro getDataFormatada:" + e);
         }
     }
 
-    public static String getDataFormatada(LocalDate data, String mask) {
+    public static String getDataFormatada(LocalDate localDate, String mask) {
         try {
-            if (data == null) {
+            if (localDate == null) {
                 return "";
             }
-            return new SimpleDateFormat(mask).format(data);
+            return new SimpleDateFormat(mask).format(localDate);
         } catch (Exception e) {
             throw new RuntimeException("Erro getDataFormatada:" + e);
         }
     }
 
-    public static LocalDateTime getLocalDateTimeIso(String dataIso8601) {
+    public static LocalDateTime getLocalDateTimeIso(String localDateTimeIso8601) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-            return LocalDateTime.parse(dataIso8601, formatter);
+            return LocalDateTime.parse(localDateTimeIso8601, formatter);
         } catch (Exception e) {
             throw new RuntimeException("Erro getLocalDateTimeIso:" + e);
         }
     }
 
-    public static LocalDate getLocalDateIso(String dataIso8601) {
+    public static LocalDate getLocalDateIso(String localDateTimeIso8601) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-            LocalDateTime localDateTime = LocalDateTime.parse(dataIso8601, formatter);
+            LocalDateTime localDateTime = LocalDateTime.parse(localDateTimeIso8601, formatter);
             return localDateTime.toLocalDate();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro getLocalDateIso:" + e);
+        }
+    }
+
+    public static String getLocalDateStringIso(LocalDateTime localDateTimeIso8601) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+            return localDateTimeIso8601.format(formatter);
         } catch (Exception e) {
             throw new RuntimeException("Erro getLocalDateIso:" + e);
         }

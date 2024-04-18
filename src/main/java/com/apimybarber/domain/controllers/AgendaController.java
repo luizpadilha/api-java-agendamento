@@ -55,7 +55,7 @@ public class AgendaController {
     public ResponseEntity<Void> salvarAgenda(@RequestBody AgendaVO data) {
         try {
             User user = userService.buscar(data.userId());
-            if (user == null) return ResponseEntity.status(402).build();
+            if (user == null) return ResponseEntity.badRequest().build();
             Agenda agenda = service.buscar(data.id());
             Pessoa pessoa = pessoaService.buscar(data.pessoa().id());
             Servico servico = servicoService.buscar(data.servico().id());
