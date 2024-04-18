@@ -1,8 +1,7 @@
-package com.apimybarber.unit.services;
+package com.apimybarber.domain.services;
 
 import com.apimybarber.domain.entity.*;
 import com.apimybarber.domain.repositories.AgendaRepository;
-import com.apimybarber.domain.services.AgendaService;
 import com.apimybarber.domain.utils.LocalDateUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

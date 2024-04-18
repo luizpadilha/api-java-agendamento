@@ -1,10 +1,9 @@
-package com.apimybarber.unit.services;
+package com.apimybarber.domain.services;
 
 import com.apimybarber.domain.entity.Servico;
 import com.apimybarber.domain.entity.User;
 import com.apimybarber.domain.entity.UserRole;
 import com.apimybarber.domain.repositories.ServicoRepository;
-import com.apimybarber.domain.services.ServicoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

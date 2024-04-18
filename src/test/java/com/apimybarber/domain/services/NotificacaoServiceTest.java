@@ -1,10 +1,9 @@
-package com.apimybarber.unit.services;
+package com.apimybarber.domain.services;
 
 import com.apimybarber.domain.entity.Notificacao;
 import com.apimybarber.domain.entity.User;
 import com.apimybarber.domain.entity.UserRole;
 import com.apimybarber.domain.repositories.NotificacaoRepository;
-import com.apimybarber.domain.services.NotificacaoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

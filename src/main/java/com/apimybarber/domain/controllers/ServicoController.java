@@ -44,7 +44,7 @@ public class ServicoController {
     public ResponseEntity<Void> salvarServico(@RequestBody ServicoVO data) {
         try {
             User user = userService.buscar(data.userId());
-            if (user == null) return ResponseEntity.status(402).build();
+            if (user == null) return ResponseEntity.badRequest().build();
             Servico servico = service.buscar(data.id());
             if (servico == null) {
                 servico = new Servico(data.id(), data.descricao(), data.preco(), user);

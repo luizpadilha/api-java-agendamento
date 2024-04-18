@@ -36,7 +36,7 @@ public class NotificacaoController {
             return ResponseEntity.ok(notificacoes);
         } catch (Exception e) {
             logger.error("Erro: ", e);
-            return ResponseEntity.status(401).build();
+            return ResponseEntity.badRequest().build();
         }
     }
 
@@ -45,13 +45,13 @@ public class NotificacaoController {
     public ResponseEntity<Void> salvarNotificacoes(@RequestBody NotificacaoVO data) {
         try {
             User user = userService.buscar(data.userId());
-            if (user == null) return ResponseEntity.status(402).build();
+            if (user == null) return ResponseEntity.badRequest().build();
             Notificacao notificacao = new Notificacao(null, data.titulo(), data.descricao(), user);
             service.gravar(notificacao);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             logger.error("Erro: ", e);
-            return ResponseEntity.status(401).build();
+            return ResponseEntity.badRequest().build();
         }
     }
 

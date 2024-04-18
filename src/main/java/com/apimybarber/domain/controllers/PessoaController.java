@@ -43,7 +43,7 @@ public class PessoaController {
     public ResponseEntity<Void> salvarPessoa(@RequestBody PessoaVO data) {
         try {
             User user = userService.buscar(data.userId());
-            if (user == null) return ResponseEntity.status(402).build();
+            if (user == null) return ResponseEntity.badRequest().build();
             Pessoa pessoa = service.buscar(data.id());
             if (pessoa == null) {
                 pessoa = new Pessoa(data.id(), data.nome(), data.numero(), user);

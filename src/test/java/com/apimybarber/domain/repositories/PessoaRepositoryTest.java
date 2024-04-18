@@ -1,9 +1,8 @@
-package com.apimybarber.unit.repositories;
+package com.apimybarber.domain.repositories;
 
-import com.apimybarber.domain.entity.Servico;
+import com.apimybarber.domain.entity.Pessoa;
 import com.apimybarber.domain.entity.User;
 import com.apimybarber.domain.entity.UserRole;
-import com.apimybarber.domain.repositories.ServicoRepository;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,37 +16,37 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @ActiveProfiles("test")
-class ServicoRepositoryTest {
+class PessoaRepositoryTest {
 
     @Autowired
-    ServicoRepository servicoRepository;
+    PessoaRepository pessoaRepository;
 
     @Autowired
     EntityManager entityManager;
 
     @Test
-    @DisplayName("Should get Servicos successfully from DB")
-    void findByLogin_dadoServicoSalvoComUser_deveRetornarServicos() {
+    @DisplayName("Should get Pessoas successfully from DB")
+    void findByLogin_dadoPessoaSalvoComUser_deveRetornarPessoas() {
         String login = "usuarioAdm";
         User newUser = new User(login, "senha123", UserRole.ADMIN);
         this.salvarUser(newUser);
 
-        Servico servico = new Servico(null, "corte", 15.0, newUser);
-        this.salvarServico(servico);
+        Pessoa pessoa = new Pessoa(null, "luiz", "44 99999-9999", newUser);
+        this.salvarPessoa(pessoa);
 
-        List<Servico> result = this.servicoRepository.findAllByUser_Id(newUser.getId());
+        List<Pessoa> result = this.pessoaRepository.findAllByUser_Id(newUser.getId());
 
         assertTrue(result != null && !result.isEmpty());
     }
 
     @Test
-    @DisplayName("Should not get Servicos from DB when Servicos not exists")
-    void findByLogin_dadoServicoNaoSalvo_deveRetornarVazio() {
+    @DisplayName("Should not get Pessoas from DB when Pessoas not exists")
+    void findByLogin_dadoPessoaNaoSalvo_deveRetornarVazio() {
         String login = "usuarioAdm";
         User newUser = new User(login, "senha123", UserRole.ADMIN);
         this.salvarUser(newUser);
 
-        List<Servico> result = this.servicoRepository.findAllByUser_Id(newUser.getId());
+        List<Pessoa> result = this.pessoaRepository.findAllByUser_Id(newUser.getId());
 
         assertTrue(result == null || result.isEmpty());
     }
@@ -57,9 +56,10 @@ class ServicoRepositoryTest {
         return user;
     }
 
-    private Servico salvarServico(Servico servico) {
-        this.entityManager.persist(servico);
-        return servico;
+    private Pessoa salvarPessoa(Pessoa pessoa) {
+        this.entityManager.persist(pessoa);
+        return pessoa;
     }
+
 
 }
