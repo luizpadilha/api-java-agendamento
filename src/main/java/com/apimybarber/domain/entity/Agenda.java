@@ -23,7 +23,7 @@ public class Agenda {
     @ManyToOne
     private Servico servico;
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne()
     private User user;
     private LocalDateTime horario;
 }

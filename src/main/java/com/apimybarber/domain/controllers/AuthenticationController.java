@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -45,7 +46,7 @@ public class AuthenticationController {
 
             var token = tokenService.generateToken((User) auth.getPrincipal());
 
-            return ResponseEntity.ok(new LoginResponseVO(token, data.login(), ((User) auth.getPrincipal()).getId(), 72000));
+            return ResponseEntity.ok(new LoginResponseVO(token, data.login(), ((User) auth.getPrincipal()).getId(), 120));
 
         } catch (AuthenticationException e) {
             logger.error("Erro: ", e);
@@ -69,7 +70,7 @@ public class AuthenticationController {
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             logger.error("Erro: ", e);
-            return ResponseEntity.status(401).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 }
