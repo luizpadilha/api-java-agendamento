@@ -46,11 +46,11 @@ public class AuthenticationController {
 
             var token = tokenService.generateToken((User) auth.getPrincipal());
 
-            return ResponseEntity.ok(new LoginResponseVO(token, data.login(), ((User) auth.getPrincipal()).getId(), 120));
+            return ResponseEntity.ok(new LoginResponseVO(token, data.login(), ((User) auth.getPrincipal()).getId(), 43200));
 
         } catch (AuthenticationException e) {
             logger.error("Erro: ", e);
-            return ResponseEntity.ok(new ResponseErroVO(e.getMessage(), 400));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } catch (Exception e) {
             logger.error("Erro: ", e);
             return ResponseEntity.ok(new ResponseErroVO(e.getMessage(), 500));
