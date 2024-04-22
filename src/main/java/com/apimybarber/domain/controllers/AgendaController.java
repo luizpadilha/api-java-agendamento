@@ -13,6 +13,7 @@ import com.apimybarber.domain.viewobject.AgendaVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +47,7 @@ public class AgendaController {
             return ResponseEntity.ok(agendas);
         } catch (Exception e) {
             logger.error("Erro: ", e);
-            return ResponseEntity.status(401).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
@@ -77,7 +78,7 @@ public class AgendaController {
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             logger.error("Erro: ", e);
-            return ResponseEntity.status(401).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
@@ -88,7 +89,7 @@ public class AgendaController {
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             logger.error("Erro: ", e);
-            return ResponseEntity.status(401).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 }

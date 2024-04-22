@@ -31,21 +31,17 @@ public class TokenService {
         }
     }
 
-    public String validateToken(String token) {
-        try {
+    public String validateToken(String token) throws JWTVerificationException{
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
                     .withIssuer("auth-api")
                     .build()
                     .verify(token)
                     .getSubject();
-        } catch (JWTVerificationException exception) {
-            return "";
-        }
     }
 
-    private Instant genExpirationDate() {
-        return LocalDateTime.now().plusSeconds(72000).toInstant(ZoneOffset.of("-03:00"));
+    public Instant genExpirationDate() {
+        return LocalDateTime.now().plusSeconds(120).toInstant(ZoneOffset.of("-03:00"));
     }
 
     public void setSecret(String secret) {
