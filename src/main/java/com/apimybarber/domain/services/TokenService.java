@@ -41,8 +41,8 @@ public class TokenService {
     }
 
     public Instant genExpirationDate() {
-        //12horas
-        return LocalDateTime.now().plusSeconds(43200).toInstant(ZoneOffset.of("-03:00"));
+        //20minutos
+        return LocalDateTime.now().plusSeconds(1200).toInstant(ZoneOffset.of("-03:00"));
     }
 
     public void setSecret(String secret) {
