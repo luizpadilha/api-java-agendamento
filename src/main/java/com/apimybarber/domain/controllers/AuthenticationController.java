@@ -46,7 +46,7 @@ public class AuthenticationController {
 
             var token = tokenService.generateToken((User) auth.getPrincipal());
 
-            return ResponseEntity.ok(new LoginResponseVO(token, data.login(), ((User) auth.getPrincipal()).getId(), 43200));
+            return ResponseEntity.ok(new LoginResponseVO(token, data.login(), ((User) auth.getPrincipal()).getId(), 1200));
 
         } catch (AuthenticationException e) {
             logger.error("Erro: ", e);

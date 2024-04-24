@@ -8,6 +8,7 @@ import com.apimybarber.domain.viewobject.ServicoVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -61,10 +62,13 @@ public class ServicoController {
     }
 
     @PostMapping(value = "/remover-servico")
-    public ResponseEntity<Void> removerServico(@RequestParam String servicoId) {
+    public ResponseEntity<String> removerServico(@RequestParam String servicoId) {
         try {
             service.excluir(servicoId);
             return ResponseEntity.ok().build();
+        } catch (DataIntegrityViolationException e) {
+            logger.error("Erro: ", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Servico vinculada a outro cadastro.");
         } catch (Exception e) {
             logger.error("Erro: ", e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

@@ -8,6 +8,7 @@ import com.apimybarber.domain.viewobject.PessoaVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -61,10 +62,13 @@ public class PessoaController {
     }
 
     @PostMapping(value = "/remover-pessoa")
-    public ResponseEntity<Void> removerPessoa(@RequestParam String pessoaId) {
+    public ResponseEntity<String> removerPessoa(@RequestParam String pessoaId) {
         try {
             service.excluir(pessoaId);
             return ResponseEntity.ok().build();
+        } catch (DataIntegrityViolationException e) {
+            logger.error("Erro: ", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Pessoa vinculada a outro cadastro.");
         } catch (Exception e) {
             logger.error("Erro: ", e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
