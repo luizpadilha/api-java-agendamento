@@ -1,5 +1,6 @@
 package com.apimybarber.domain.utils;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -55,6 +56,15 @@ public class LocalDateUtils {
             return localDateTimeIso8601.format(formatter);
         } catch (Exception e) {
             throw new RuntimeException("Erro getLocalDateIso:" + e);
+        }
+    }
+
+    public static LocalDate getLocalDateTimestamp(Timestamp timestamp) {
+        try {
+            LocalDateTime localDateTime = timestamp.toLocalDateTime();
+            return localDateTime.toLocalDate();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro getLocalDateTimestamp:" + e);
         }
     }
 
