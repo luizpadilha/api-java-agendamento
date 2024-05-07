@@ -45,6 +45,8 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST, "/api/agenda/remover-agenda").hasRole("USER")
 
                         .requestMatchers(HttpMethod.GET, "/api/grafico/grafico-por-periodo").hasRole("USER")
+
+                        .requestMatchers(HttpMethod.GET, "/api/horario/horarios-por-data").hasRole("USER")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -64,7 +65,8 @@ public class AgendaController {
                 pessoa = new Pessoa(data.id(), data.pessoa().nome(), data.pessoa().numero(), user);
             }
             if (servico == null) {
-                servico = new Servico(data.id(), data.servico().descricao(), data.servico().preco(), user);
+                LocalTime tempo = LocalTime.parse(data.servico().tempo());
+                servico = new Servico(data.id(), data.servico().descricao(), data.servico().preco(), user, tempo);
             }
             LocalDateTime horario = LocalDateUtils.getLocalDateTimeIso(data.horarioToIso8601());
             if (agenda == null) {
