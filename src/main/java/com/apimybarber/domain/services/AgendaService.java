@@ -2,6 +2,7 @@ package com.apimybarber.domain.services;
 
 
 import com.apimybarber.domain.entity.Agenda;
+import com.apimybarber.domain.enums.TipoPeriodo;
 import com.apimybarber.domain.repositories.AgendaRepository;
 import com.apimybarber.domain.utils.LocalDateUtils;
 import com.apimybarber.domain.viewobject.AgendaAgrupadaVO;
@@ -24,9 +25,14 @@ public class AgendaService extends AbstractService<Agenda> {
         return repository.findAllByUserIdAndHorario(username, LocalDateUtils.getDataFormatada(horario));
     }
 
-    public List<AgendaAgrupadaVO> findAllAgrupadaByUserIdAndPeriodo(String username, LocalDate LocalDateInicial, LocalDate LocalDateFinal) {
+    public List<AgendaAgrupadaVO> findAllAgrupadaByUserIdAndPeriodo(String username, LocalDate LocalDateInicial, LocalDate LocalDateFinal, TipoPeriodo tipoPeriodo) {
         List<AgendaAgrupadaVO> retorno = new ArrayList<>();
-        List<Object[]> dados = repository.findAllAgrupadaByUserIdAndPeriodo(username, LocalDateUtils.getDataFormatada(LocalDateInicial), LocalDateUtils.getDataFormatada(LocalDateFinal));
+        List<Object[]> dados = new ArrayList<>();
+        if (TipoPeriodo.SEMANA.equals(tipoPeriodo)) {
+            dados = repository.findAllAgrupadaSemanalByUserIdAndPeriodo(username, LocalDateUtils.getDataFormatada(LocalDateInicial), LocalDateUtils.getDataFormatada(LocalDateFinal));
+        } else {
+            dados = repository.findAllAgrupadaMensalByUserIdAndPeriodo(username, LocalDateUtils.getDataFormatada(LocalDateInicial), LocalDateUtils.getDataFormatada(LocalDateFinal));
+        }
         for (Object[] dado : dados) {
             LocalDate localDate = LocalDateUtils.getLocalDateTimestamp((Timestamp) dado[0]);
             BigDecimal valor = (BigDecimal) dado[1];

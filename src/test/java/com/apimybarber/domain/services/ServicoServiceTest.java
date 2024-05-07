@@ -31,7 +31,7 @@ class ServicoServiceTest {
     private String idUser = "123";
     private String descricao = "login123";
     private User user = new User(idUser, "login123", "senha123", UserRole.ADMIN);
-    private Servico servico = new Servico(id, descricao, 15.0, null);
+    private Servico servico = new Servico(id, descricao, 15.0, null, null);
 
     @BeforeEach
     public void setUp() {

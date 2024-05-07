@@ -22,6 +22,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
@@ -54,7 +56,7 @@ class AgendaControllerTest {
     private String idUser = "123456";
     private User user = new User(idUser, "login123", "senha123", UserRole.ADMIN);
     private String descricao = "descricao123";
-    private Servico servico = new Servico(idServ, descricao, 15.0, user);
+    private Servico servico = new Servico(idServ, descricao, 15.0, user, LocalTime.now());
     private String nome = "nome123";
     private Pessoa pessoa = new Pessoa(idPes, nome, "44 99999-9999", user);
     private LocalDateTime horario = LocalDateTime.of(2024, 4, 18, 12, 30, 45);
@@ -94,7 +96,7 @@ class AgendaControllerTest {
         when(servicoService.buscar(idServ)).thenReturn(servico);
         when(pessoaService.buscar(idPes)).thenReturn(pessoa);
         when(agendaService.buscar(id)).thenReturn(agenda);
-        ServicoVO servicoVO = new ServicoVO(idServ, servico.getDescricao(), servico.getPreco(), idUser);
+        ServicoVO servicoVO = new ServicoVO(idServ, servico.getDescricao(), servico.getPreco(), idUser, servico.getTempo().format(DateTimeFormatter.ISO_TIME));
         PessoaVO pessoaVO = new PessoaVO(idPes, pessoa.getNome(), pessoa.getNumero(), idUser);
         AgendaVO agendaVO = new AgendaVO(id, LocalDateUtils.getLocalDateStringIso(horario), servicoVO, pessoaVO, idUser);
 
@@ -119,7 +121,7 @@ class AgendaControllerTest {
         when(servicoService.buscar(idServ)).thenReturn(servico);
         when(pessoaService.buscar(idPes)).thenReturn(pessoa);
         when(agendaService.buscar(id)).thenReturn(null);
-        ServicoVO servicoVO = new ServicoVO(idServ, servico.getDescricao(), servico.getPreco(), idUser);
+        ServicoVO servicoVO = new ServicoVO(idServ, servico.getDescricao(), servico.getPreco(), idUser, servico.getTempo().format(DateTimeFormatter.ISO_TIME));
         PessoaVO pessoaVO = new PessoaVO(idPes, pessoa.getNome(), pessoa.getNumero(), idUser);
         AgendaVO agendaVO = new AgendaVO(id, LocalDateUtils.getLocalDateStringIso(horario), servicoVO, pessoaVO, idUser);
 
@@ -142,7 +144,7 @@ class AgendaControllerTest {
         when(servicoService.buscar(idServ)).thenReturn(null);
         when(pessoaService.buscar(idPes)).thenReturn(null);
         when(agendaService.buscar(id)).thenReturn(null);
-        ServicoVO servicoVO = new ServicoVO(idServ, servico.getDescricao(), servico.getPreco(), idUser);
+        ServicoVO servicoVO = new ServicoVO(idServ, servico.getDescricao(), servico.getPreco(), idUser, servico.getTempo().format(DateTimeFormatter.ISO_TIME));
         PessoaVO pessoaVO = new PessoaVO(idPes, pessoa.getNome(), pessoa.getNumero(), idUser);
         AgendaVO agendaVO = new AgendaVO(id, LocalDateUtils.getLocalDateStringIso(horario), servicoVO, pessoaVO, idUser);
 
@@ -152,7 +154,8 @@ class AgendaControllerTest {
                 .andExpect(status().isOk());
 
         Pessoa newPessoa = new Pessoa(idPes, agendaVO.pessoa().nome(), agendaVO.pessoa().numero(), user);
-        Servico newServico = new Servico(idServ, agendaVO.servico().descricao(), agendaVO.servico().preco(), user);
+        LocalTime tempo = LocalTime.parse(servicoVO.tempo());
+        Servico newServico = new Servico(idServ, agendaVO.servico().descricao(), agendaVO.servico().preco(), user, tempo);
         Agenda newAgenda = new Agenda(id, newPessoa, newServico, user, horario);
         verify(servicoService, times(1)).buscar(idServ);
         verify(pessoaService, times(1)).buscar(idPes);

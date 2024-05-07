@@ -100,4 +100,9 @@
     <changeSet id="12" author="luizpadilha">
         <sqlFile path="changelog/sql/insert-user.sql"/>
     </changeSet>
+    <changeSet id="13" author="luizpadilha">
+        <addColumn tableName="servico">
+            <column name="tempo" type="time"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

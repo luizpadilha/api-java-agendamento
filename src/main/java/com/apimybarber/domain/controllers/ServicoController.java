@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -33,6 +34,12 @@ public class ServicoController {
     public ResponseEntity<List<Servico>> servicos(@RequestParam String userId) {
         try {
             List<Servico> servicos = service.findAllByUser_Id(userId);
+            servicos.forEach(serv -> {
+                if (serv.getTempo() != null) {
+                    serv.setTempoHora(serv.getTempo().getHour());
+                    serv.setTempoMinuto(serv.getTempo().getMinute());
+                }
+            });
             return ResponseEntity.ok(servicos);
         } catch (Exception ex) {
             logger.error("Erro: ", ex);
@@ -47,11 +54,13 @@ public class ServicoController {
             User user = userService.buscar(data.userId());
             if (user == null) return ResponseEntity.badRequest().build();
             Servico servico = service.buscar(data.id());
+            LocalTime tempo = LocalTime.parse(data.tempo());
             if (servico == null) {
-                servico = new Servico(data.id(), data.descricao(), data.preco(), user);
+                servico = new Servico(data.id(), data.descricao(), data.preco(), user, tempo);
             } else {
                 servico.setDescricao(data.descricao());
                 servico.setPreco(data.preco());
+                servico.setTempo(tempo);
             }
             service.gravar(servico);
             return ResponseEntity.ok().build();

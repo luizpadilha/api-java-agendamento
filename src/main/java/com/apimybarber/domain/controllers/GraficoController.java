@@ -25,10 +25,10 @@ import java.util.*;
 @CrossOrigin
 public class GraficoController {
 
-    private Logger logger = LoggerFactory.getLogger(AgendaController.class);
+    private Logger logger = LoggerFactory.getLogger(GraficoController.class);
 
     @Autowired
-    private AgendaService service;
+    private AgendaService agendaService;
 
     @GetMapping(value = "/grafico-por-periodo")
     public ResponseEntity<List<GraficoVO>> graficoPorPeriogo(@RequestParam String userId,
@@ -38,7 +38,7 @@ public class GraficoController {
         try {
             LocalDate localDateInicial = LocalDateUtils.getLocalDateIso(dataInicial);
             LocalDate localDateFinal = LocalDateUtils.getLocalDateIso(dataFinal);
-            List<AgendaAgrupadaVO> agendas = service.findAllAgrupadaByUserIdAndPeriodo(userId, localDateInicial, localDateFinal);
+            List<AgendaAgrupadaVO> agendas = agendaService.findAllAgrupadaByUserIdAndPeriodo(userId, localDateInicial, localDateFinal, tipoPeriodo);
             return ResponseEntity.ok(montarGrafico(agendas, tipoPeriodo, localDateInicial));
         } catch (Exception e) {
             logger.error("Erro: ", e);
@@ -56,7 +56,7 @@ public class GraficoController {
                 retorno.add(new GraficoVO(total.doubleValue(), descricao));
             }
 
-        } else  if (TipoPeriodo.SEMESTRE1.equals(tipoPeriodo)) {
+        } else if (TipoPeriodo.SEMESTRE1.equals(tipoPeriodo)) {
             List<String> meses = new ArrayList<>(Arrays.asList("Jan", "Fev", "Mar", "Abr", "Mai", "Jun"));
             montarGraficoSemestral(agendas, retorno, meses);
 

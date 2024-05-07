@@ -11,7 +11,7 @@ public interface AgendaRepository extends JpaRepository<Agenda, String> {
 
     @Query(value = "select ad.* from agenda ad " +
             " where ad.user_id = :user_id " +
-            " and to_char(ad.horario, 'dd/MM/yyyy') = :horarioFormatado", nativeQuery = true)
+            " and to_char(ad.horario, 'dd/MM/yyyy') = :horarioFormatado order by ad.horario asc ", nativeQuery = true)
     List<Agenda> findAllByUserIdAndHorario(String user_id, String horarioFormatado);
 
     @Query(value = "select date_trunc('day', ad.horario) as data, sum(serv.preco) as total " +
@@ -21,7 +21,16 @@ public interface AgendaRepository extends JpaRepository<Agenda, String> {
             " and date_trunc('day', ad.horario) between to_date(:localDateInicial, 'dd/MM/yyyy') and to_date(:localDateFinal, 'dd/MM/yyyy') " +
             " group by data " +
             " order by data", nativeQuery = true)
-    List<Object[]> findAllAgrupadaByUserIdAndPeriodo(String user_id, String localDateInicial, String localDateFinal);
+    List<Object[]> findAllAgrupadaSemanalByUserIdAndPeriodo(String user_id, String localDateInicial, String localDateFinal);
+
+    @Query(value = "select date_trunc('month', ad.horario) as data, sum(serv.preco) as total " +
+            " from agenda ad " +
+            " inner join servico serv on ad.servico_id = serv.id " +
+            " where ad.user_id = :user_id " +
+            " and date_trunc('day', ad.horario) between to_date(:localDateInicial, 'dd/MM/yyyy') and to_date(:localDateFinal, 'dd/MM/yyyy') " +
+            " group by data " +
+            " order by data", nativeQuery = true)
+    List<Object[]> findAllAgrupadaMensalByUserIdAndPeriodo(String user_id, String localDateInicial, String localDateFinal);
 
 
 }
