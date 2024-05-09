@@ -31,7 +31,7 @@ public class GraficoController {
     private AgendaService agendaService;
 
     @GetMapping(value = "/grafico-por-periodo")
-    public ResponseEntity<List<GraficoVO>> graficoPorPeriogo(@RequestParam String userId,
+    public ResponseEntity<List<GraficoVO>> graficoPorPeriodo(@RequestParam String userId,
                                                              @RequestParam String dataInicial,
                                                              @RequestParam String dataFinal,
                                                              @RequestParam TipoPeriodo tipoPeriodo) {

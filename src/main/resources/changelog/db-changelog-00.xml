@@ -105,4 +105,43 @@
             <column name="tempo" type="time"/>
         </addColumn>
     </changeSet>
+    <changeSet id="14" author="luizpadilha">
+        <createTable tableName="configuracao">
+            <column name="id" type="${id}">
+                <constraints primaryKey="true" primaryKeyName="pk_configuracao"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="15" author="luizpadilha">
+        <createTable tableName="configuracaoexpediente">
+            <column name="id" type="${id}">
+                <constraints primaryKey="true" primaryKeyName="pk_configuracaoexpediente"/>
+            </column>
+            <column name="configuracao_id" type="${id}"/>
+            <column name="inicioexpediente" type="time"/>
+            <column name="finalexpediente" type="time"/>
+            <column name="inicioalmoco" type="time"/>
+            <column name="finalalmoco" type="time"/>
+            <column name="diasemana" type="${descricaocurta}"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="16" author="luizpadilha">
+        <addForeignKeyConstraint baseTableName="configuracaoexpediente"
+                                 baseColumnNames="configuracao_id"
+                                 constraintName="fk_configuracaoexpediente_configuracao"
+                                 referencedTableName="configuracao"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    <changeSet id="17" author="luizpadilha">
+        <addColumn tableName="configuracao">
+            <column name="user_id" type="${id}"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="18" author="luizpadilha">
+        <addForeignKeyConstraint baseTableName="configuracao"
+                                 baseColumnNames="user_id"
+                                 constraintName="fk_configuracao_user"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"/>
+    </changeSet>
 </databaseChangeLog>
