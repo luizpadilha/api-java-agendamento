@@ -71,4 +71,8 @@ public class ConfiguracaoService extends AbstractService<Configuracao> {
         }
         return gravar(configuracao);
     }
+
+    public ConfiguracaoExpediente buscarConfiguracaoExpedientePorConfiguracaoEDiaSemana(String configuracao_id, DiaSemana diaSemana) {
+        return configuracaoExpedienteService.buscarConfiguracaoExpedientePorConfiguracaoEDiaSemana(configuracao_id, diaSemana);
+    }
 }
