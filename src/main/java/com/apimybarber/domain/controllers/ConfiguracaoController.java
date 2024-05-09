@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalTime;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -52,6 +53,7 @@ public class ConfiguracaoController {
             Configuracao configuracao = configuracaoService.buscar(configId);
             List<ConfiguracaoExpediente> configs = configuracao.getExpedientes();
             configs.forEach(obj -> obj.setIdConfig(configId));
+            Collections.sort(configs);
             return ResponseEntity.ok(configs);
         } catch (Exception e) {
             logger.error("Erro: ", e);

@@ -38,6 +38,6 @@ public class ConfiguracaoExpediente implements Comparable<ConfiguracaoExpediente
 
     @Override
     public int compareTo(ConfiguracaoExpediente o) {
-        return this.getId().compareTo(o.getId());
+        return this.getDiaSemana().getDiaDaSemana() - o.getDiaSemana().getDiaDaSemana();
     }
 }

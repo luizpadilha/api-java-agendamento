@@ -1,8 +1,12 @@
 package com.apimybarber.domain.controllers;
 
 import com.apimybarber.domain.entity.Agenda;
+import com.apimybarber.domain.entity.Configuracao;
+import com.apimybarber.domain.entity.ConfiguracaoExpediente;
 import com.apimybarber.domain.entity.Servico;
+import com.apimybarber.domain.enums.DiaSemana;
 import com.apimybarber.domain.services.AgendaService;
+import com.apimybarber.domain.services.ConfiguracaoService;
 import com.apimybarber.domain.services.ServicoService;
 import com.apimybarber.domain.utils.LocalDateUtils;
 import com.apimybarber.domain.viewobject.HorarioVO;
@@ -30,6 +34,8 @@ public class HorarioController {
     private AgendaService agendaService;
     @Autowired
     private ServicoService servicoService;
+    @Autowired
+    private ConfiguracaoService configuracaoService;
 
 
     @GetMapping(value = "/horarios-por-data")
@@ -40,39 +46,61 @@ public class HorarioController {
             LocalDate localDate = LocalDateUtils.getLocalDateIso(data);
             List<Agenda> agendas = agendaService.findAllByUserIdAndHorario(userId, localDate);
             Servico servico = servicoService.buscar(servicoId);
-            return ResponseEntity.ok(montarHorariosDisponiveis(servico.getTempo(), agendas));
+            return ResponseEntity.ok(montarHorariosDisponiveis(servico.getTempo(), agendas, userId, localDate));
         } catch (Exception e) {
             logger.error("Erro: ", e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
-    private static List<HorarioVO> montarHorariosDisponiveis(LocalTime tempoServico, List<Agenda> horariosAgendados) {
+    private List<HorarioVO> montarHorariosDisponiveis(LocalTime tempoServico, List<Agenda> horariosAgendados, String userId, LocalDate localDate) {
         List<LocalTime> horariosDisponiveis = new ArrayList<>();
         List<HorarioVO> horarios = new ArrayList<>();
 
-        LocalTime horarioAtual = LocalTime.of(8, 0); // Horário inicial
-        LocalTime horarioFinal = LocalTime.of(17, 0); // Horário final
+        Configuracao configuracao = configuracaoService.findAllByUser_Id(userId).stream().findFirst().orElse(null);
+        DiaSemana diaSemana = DiaSemana.converterDayOfWeek(localDate.getDayOfWeek());
+        ConfiguracaoExpediente configuracaoExpediente = configuracaoService.buscarConfiguracaoExpedientePorConfiguracaoEDiaSemana(configuracao.getId(), diaSemana);
 
-        for (Agenda agenda : horariosAgendados) {
-            LocalTime horarioAgendado = agenda.getHorario().toLocalTime();
-            while (horarioAtual.plusMinutes(tempoServico.getMinute()).minusMinutes(1).isBefore(horarioAgendado)) {
-                horariosDisponiveis.add(horarioAtual);
-                horarioAtual = horarioAtual.plusMinutes(tempoServico.getMinute());
-            }
-            horarioAtual = horarioAgendado.plusMinutes(agenda.getServico().getTempo().getMinute());
-        }
+        LocalTime inicioExpediente = configuracaoExpediente.getInicioExpediente();
+        LocalTime inicioAlmoco = configuracaoExpediente.getInicioAlmoco();
+        LocalTime finalAlmoco = configuracaoExpediente.getFinalAlmoco();
+        LocalTime finalExpediente = configuracaoExpediente.getFinalExpediente();
 
-        while (horarioAtual.minusMinutes(1).isBefore(horarioFinal)) {
-            horariosDisponiveis.add(horarioAtual);
-            horarioAtual = horarioAtual.plusMinutes(tempoServico.getMinute());
-        }
-        horariosDisponiveis.removeIf(horario -> horario.isAfter(horarioFinal));
+        // Etapa da manhã antes do almoço
+        LocalTime horarioAtual = inicioExpediente;
+        LocalTime horarioFinal = inicioAlmoco;
+        adicionarHorariosDisponiveisPorPeriodo(tempoServico, horariosAgendados, horariosDisponiveis, horarioAtual, horarioFinal);
+
+        // Etapa da tarde após o almoço
+        horarioAtual = finalAlmoco;
+        horarioFinal = finalExpediente;
+        adicionarHorariosDisponiveisPorPeriodo(tempoServico, horariosAgendados, horariosDisponiveis, horarioAtual, horarioFinal);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         for (LocalTime horarioDisponivel : horariosDisponiveis) {
             horarios.add(new HorarioVO(horarioDisponivel.format(formatter), true));
         }
-         return horarios;
+        return horarios;
     }
+
+    private void adicionarHorariosDisponiveisPorPeriodo(LocalTime tempoServico, List<Agenda> horariosAgendados, List<LocalTime> horariosDisponiveis, LocalTime horarioAtual, LocalTime horarioFinal) {
+        for (Agenda agenda : horariosAgendados) {
+            LocalTime horarioAgendado = agenda.getHorario().toLocalTime();
+            while (horarioAtual.plusMinutes(tempoServico.getMinute()).minusMinutes(1).isBefore(horarioAgendado)
+                    && horarioAtual.plusMinutes(tempoServico.getMinute()).minusMinutes(1).isBefore(horarioFinal)) {
+                horariosDisponiveis.add(horarioAtual);
+                horarioAtual = horarioAtual.plusMinutes(tempoServico.getMinute());
+            }
+            if (horarioAgendado.plusMinutes(agenda.getServico().getTempo().getMinute()).isAfter(horarioAtual)) {
+                horarioAtual = horarioAgendado.plusMinutes(agenda.getServico().getTempo().getMinute());
+            }
+        }
+
+        while (horarioAtual.isBefore(horarioFinal)) {
+            horariosDisponiveis.add(horarioAtual);
+            horarioAtual = horarioAtual.plusMinutes(tempoServico.getMinute());
+        }
+    }
+
+
 }

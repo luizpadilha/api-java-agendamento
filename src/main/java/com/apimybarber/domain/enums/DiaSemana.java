@@ -1,14 +1,16 @@
 package com.apimybarber.domain.enums;
 
+import java.time.DayOfWeek;
+
 public enum DiaSemana {
 
-    DOMINGO("Domingo", 1),
-    SEGUNDA("Segunda-Feira", 2),
-    TERCA("Terça-Feira", 3),
-    QUARTA("Quarta-Feira", 4),
-    QUINTA("Quinta-Feira", 5),
-    SEXTA("Sexta-Feira", 6),
-    SABADO("Sábado", 7);
+    SEGUNDA("Segunda-Feira", 1),
+    TERCA("Terça-Feira", 2),
+    QUARTA("Quarta-Feira", 3),
+    QUINTA("Quinta-Feira", 4),
+    SEXTA("Sexta-Feira", 5),
+    SABADO("Sábado", 6),
+    DOMINGO("Domingo", 7);
 
 
     private final String descricao;
@@ -25,5 +27,14 @@ public enum DiaSemana {
 
     public int getDiaDaSemana() {
         return diaDaSemana;
+    }
+
+    public static DiaSemana converterDayOfWeek(DayOfWeek dayOfWeek) {
+        for (DiaSemana diaSemana : DiaSemana.values()) {
+            if (diaSemana.getDiaDaSemana() == dayOfWeek.getValue()) {
+                return diaSemana;
+            }
+        }
+        throw new IllegalArgumentException("Dia da semana inválido: " + dayOfWeek);
     }
 }
