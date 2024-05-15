@@ -50,7 +50,7 @@ public class AuthenticationController {
 
         } catch (AuthenticationException e) {
             logger.error("Erro: ", e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.ok(new ResponseErroVO(e.getMessage(), 400));
         } catch (Exception e) {
             logger.error("Erro: ", e);
             return ResponseEntity.ok(new ResponseErroVO(e.getMessage(), 500));
