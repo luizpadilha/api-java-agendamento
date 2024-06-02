@@ -52,6 +52,17 @@ public class AgendaController {
         }
     }
 
+    @GetMapping(value = "/agendas-pessoa")
+    public ResponseEntity<List<Agenda>> agendasByPessoa(@RequestParam String userId, @RequestParam String pessoaId) {
+        try {
+            List<Agenda> agendas = service.findAllByUserIdAndPessoa(userId, pessoaId);
+            return ResponseEntity.ok(agendas);
+        } catch (Exception e) {
+            logger.error("Erro: ", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
 
     @PostMapping(value = "/salvar-agenda", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> salvarAgenda(@RequestBody AgendaVO data) {

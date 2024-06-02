@@ -14,6 +14,11 @@ public interface AgendaRepository extends JpaRepository<Agenda, String> {
             " and to_char(ad.horario, 'dd/MM/yyyy') = :horarioFormatado order by ad.horario asc ", nativeQuery = true)
     List<Agenda> findAllByUserIdAndHorario(String user_id, String horarioFormatado);
 
+    @Query(value = "select ad.* from agenda ad " +
+            " where ad.user_id = :user_id " +
+            " and ad.pessoa_id = :pessoa_id order by ad.horario desc ", nativeQuery = true)
+    List<Agenda> findAllByUserIdAndPessoa(String user_id, String pessoa_id);
+
     @Query(value = "select date_trunc('day', ad.horario) as data, sum(serv.preco) as total " +
             " from agenda ad " +
             " inner join servico serv on ad.servico_id = serv.id " +

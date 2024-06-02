@@ -1,13 +1,11 @@
 package com.apimybarber.domain.controllers;
 
-import com.apimybarber.domain.entity.Agenda;
-import com.apimybarber.domain.entity.Configuracao;
-import com.apimybarber.domain.entity.ConfiguracaoExpediente;
-import com.apimybarber.domain.entity.Servico;
+import com.apimybarber.domain.entity.*;
 import com.apimybarber.domain.enums.DiaSemana;
 import com.apimybarber.domain.services.AgendaService;
 import com.apimybarber.domain.services.ConfiguracaoService;
 import com.apimybarber.domain.services.ServicoService;
+import com.apimybarber.domain.services.UserService;
 import com.apimybarber.domain.utils.LocalDateUtils;
 import com.apimybarber.domain.viewobject.HorarioVO;
 import org.slf4j.Logger;
@@ -36,6 +34,8 @@ public class HorarioController {
     private ServicoService servicoService;
     @Autowired
     private ConfiguracaoService configuracaoService;
+    @Autowired
+    private UserService userService;
 
 
     @GetMapping(value = "/horarios-por-data")
@@ -58,6 +58,10 @@ public class HorarioController {
         List<HorarioVO> horarios = new ArrayList<>();
 
         Configuracao configuracao = configuracaoService.findAllByUser_Id(userId).stream().findFirst().orElse(null);
+        if (configuracao == null) {
+            User user = userService.buscar(userId);
+            configuracao = configuracaoService.criarConfiguracaoPadrao(user);
+        }
         DiaSemana diaSemana = DiaSemana.converterDayOfWeek(localDate.getDayOfWeek());
         ConfiguracaoExpediente configuracaoExpediente = configuracaoService.buscarConfiguracaoExpedientePorConfiguracaoEDiaSemana(configuracao.getId(), diaSemana);
 
@@ -86,18 +90,19 @@ public class HorarioController {
     private void adicionarHorariosDisponiveisPorPeriodo(LocalTime tempoServico, List<Agenda> horariosAgendados, List<LocalTime> horariosDisponiveis, LocalTime horarioAtual, LocalTime horarioFinal) {
         for (Agenda agenda : horariosAgendados) {
             LocalTime horarioAgendado = agenda.getHorario().toLocalTime();
-            while (horarioAtual.plusMinutes(tempoServico.getMinute()).minusMinutes(1).isBefore(horarioAgendado)
-                    && horarioAtual.plusMinutes(tempoServico.getMinute()).minusMinutes(1).isBefore(horarioFinal)) {
+            while (horarioAtual.plusMinutes(tempoServico.getMinute()).plusHours(tempoServico.getHour()).minusMinutes(1).isBefore(horarioAgendado)
+                    && horarioAtual.plusMinutes(tempoServico.getMinute()).plusHours(tempoServico.getHour()).minusMinutes(1).isBefore(horarioFinal)) {
                 horariosDisponiveis.add(horarioAtual);
-                horarioAtual = horarioAtual.plusMinutes(tempoServico.getMinute());
+                horarioAtual = horarioAtual.plusMinutes(tempoServico.getMinute()).plusHours(tempoServico.getHour());
             }
-            if (horarioAgendado.plusMinutes(agenda.getServico().getTempo().getMinute()).isAfter(horarioAtual)) {
-                horarioAtual = horarioAgendado.plusMinutes(agenda.getServico().getTempo().getMinute());
+            if (horarioAgendado.plusMinutes(agenda.getServico().getTempo().getMinute()).plusHours(agenda.getServico().getTempo().getHour()).isAfter(horarioAtual)) {
+                horarioAtual = horarioAgendado.plusMinutes(agenda.getServico().getTempo().getMinute()).plusHours(agenda.getServico().getTempo().getHour());
             }
         }
 
         while (horarioAtual.isBefore(horarioFinal)) {
             horariosDisponiveis.add(horarioAtual);
+            horarioAtual = horarioAtual.plusHours(tempoServico.getHour());
             horarioAtual = horarioAtual.plusMinutes(tempoServico.getMinute());
         }
     }
