@@ -47,9 +47,12 @@ public class HorarioController {
             List<Agenda> agendas = agendaService.findAllByUserIdAndHorario(userId, localDate);
             Servico servico = servicoService.buscar(servicoId);
             return ResponseEntity.ok(montarHorariosDisponiveis(servico.getTempo(), agendas, userId, localDate));
+        } catch (OutOfMemoryError e) {
+            logger.error("Erro: ", e);
+            return ResponseEntity.ok(new ArrayList<>());
         } catch (Exception e) {
             logger.error("Erro: ", e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.ok(new ArrayList<>());
         }
     }
 
@@ -95,6 +98,9 @@ public class HorarioController {
                 horariosDisponiveis.add(horarioAtual);
                 horarioAtual = horarioAtual.plusMinutes(tempoServico.getMinute()).plusHours(tempoServico.getHour());
             }
+            //neccesario para pular o horario marcado, exemplo:
+            //horarioAtual = 11:00, horarioAgendado = 11:00
+            //resultado: horarioAtual = 12:00
             if (horarioAgendado.plusMinutes(agenda.getServico().getTempo().getMinute()).plusHours(agenda.getServico().getTempo().getHour()).isAfter(horarioAtual)) {
                 horarioAtual = horarioAgendado.plusMinutes(agenda.getServico().getTempo().getMinute()).plusHours(agenda.getServico().getTempo().getHour());
             }
