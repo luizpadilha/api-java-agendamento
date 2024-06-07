@@ -47,9 +47,24 @@ public class ServicoController {
         }
     }
 
+    @GetMapping(value = "/servico")
+    public ResponseEntity<Servico> servico(@RequestParam String servicoId) {
+        try {
+            Servico servico = service.buscar(servicoId);
+            if (servico.getTempo() != null) {
+                servico.setTempoHora(servico.getTempo().getHour());
+                servico.setTempoMinuto(servico.getTempo().getMinute());
+            }
+            return ResponseEntity.ok(servico);
+        } catch (Exception ex) {
+            logger.error("Erro: ", ex);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
 
     @PostMapping(value = "/salvar-servico", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> salvarServico(@RequestBody ServicoVO data) {
+    public ResponseEntity<String> salvarServico(@RequestBody ServicoVO data) {
         try {
             User user = userService.buscar(data.userId());
             if (user == null) return ResponseEntity.badRequest().build();
@@ -62,8 +77,8 @@ public class ServicoController {
                 servico.setPreco(data.preco());
                 servico.setTempo(tempo);
             }
-            service.gravar(servico);
-            return ResponseEntity.ok().build();
+            servico = service.gravar(servico);
+            return ResponseEntity.ok(servico.getId());
         } catch (Exception e) {
             logger.error("Erro: ", e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

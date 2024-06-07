@@ -45,7 +45,7 @@ public class AgendaController {
         try {
             LocalDate dataFiltro = LocalDateUtils.getLocalDateIso(data);
             List<Agenda> agendas = service.findAllByUserIdAndHorario(userId, dataFiltro);
-            return ResponseEntity.ok(agendas);
+            return getAgendasResponse(agendas);
         } catch (Exception e) {
             logger.error("Erro: ", e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -56,11 +56,22 @@ public class AgendaController {
     public ResponseEntity<List<Agenda>> agendasByPessoa(@RequestParam String userId, @RequestParam String pessoaId) {
         try {
             List<Agenda> agendas = service.findAllByUserIdAndPessoa(userId, pessoaId);
-            return ResponseEntity.ok(agendas);
+            return getAgendasResponse(agendas);
         } catch (Exception e) {
             logger.error("Erro: ", e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+    }
+
+    private ResponseEntity<List<Agenda>> getAgendasResponse(List<Agenda> agendas) {
+        agendas.forEach(agend -> {
+            Servico serv = agend.getServico();
+            if (serv.getTempo() != null) {
+                serv.setTempoHora(serv.getTempo().getHour());
+                serv.setTempoMinuto(serv.getTempo().getMinute());
+            }
+        });
+        return ResponseEntity.ok(agendas);
     }
 
 

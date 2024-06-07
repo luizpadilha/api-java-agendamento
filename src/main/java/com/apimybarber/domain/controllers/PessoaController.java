@@ -40,9 +40,20 @@ public class PessoaController {
         }
     }
 
+    @GetMapping(value = "/pessoa")
+    public ResponseEntity<Pessoa> pessoa(@RequestParam String pessoaId) {
+        try {
+            Pessoa pessoa = service.buscar(pessoaId);
+            return ResponseEntity.ok(pessoa);
+        } catch (Exception e) {
+            logger.error("Erro: ", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
 
     @PostMapping(value = "/salvar-pessoa", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> salvarPessoa(@RequestBody PessoaVO data) {
+    public ResponseEntity<String> salvarPessoa(@RequestBody PessoaVO data) {
         try {
             User user = userService.buscar(data.userId());
             if (user == null) return ResponseEntity.badRequest().build();
@@ -53,8 +64,8 @@ public class PessoaController {
                 pessoa.setNome(data.nome());
                 pessoa.setNumero(data.numero());
             }
-            service.gravar(pessoa);
-            return ResponseEntity.ok().build();
+            pessoa = service.gravar(pessoa);
+            return ResponseEntity.ok(pessoa.getId());
         } catch (Exception e) {
             logger.error("Erro: ", e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
