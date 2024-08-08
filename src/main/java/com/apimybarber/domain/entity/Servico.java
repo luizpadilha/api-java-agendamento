@@ -20,6 +20,8 @@ public class Servico {
     private String id;
     private String descricao;
     private double preco;
+    @Column(name = "fileimage")
+    private byte[] fileImage;
     @JsonIgnore
     @ManyToOne
     private User user;
@@ -29,12 +31,15 @@ public class Servico {
     private int tempoHora;
     @Transient
     private int tempoMinuto;
+    @Transient
+    private String imageBase64;
 
-    public Servico(String id, String descricao, double preco, User user, LocalTime tempo) {
+    public Servico(String id, String descricao, double preco, User user, LocalTime tempo, byte[] fileImage) {
         this.id = id;
         this.descricao = descricao;
         this.preco = preco;
         this.user = user;
         this.tempo = tempo;
+        this.fileImage = fileImage;
     }
 }

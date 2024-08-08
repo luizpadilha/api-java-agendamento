@@ -34,7 +34,7 @@ class AgendaServiceTest {
     private String idPessoa = "123";
     private LocalDateTime horario = LocalDateTime.now();
     private User user = new User(idUser, "login123", "senha123", UserRole.ADMIN);
-    private Servico servico = new Servico(id, idServico, 15.0, user, null);
+    private Servico servico = new Servico(id, idServico, 15.0, user, null, null);
     private Pessoa pessoa = new Pessoa(id, idPessoa, "44 99999-9999", user);
     private Agenda agenda = new Agenda(id, pessoa, servico, user, horario);
 

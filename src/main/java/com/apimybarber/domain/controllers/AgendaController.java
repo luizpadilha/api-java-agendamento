@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Base64;
 import java.util.List;
 
 @RestController
@@ -88,7 +89,8 @@ public class AgendaController {
             }
             if (servico == null) {
                 LocalTime tempo = LocalTime.parse(data.servico().tempo());
-                servico = new Servico(data.id(), data.servico().descricao(), data.servico().preco(), user, tempo);
+                byte[] imageBytesServico = data.servico().imageBase64() == null ? null : Base64.getDecoder().decode(data.servico().imageBase64());
+                servico = new Servico(data.id(), data.servico().descricao(), data.servico().preco(), user, tempo, imageBytesServico);
             }
             LocalDateTime horario = LocalDateUtils.getLocalDateTimeIso(data.horarioToIso8601());
             if (agenda == null) {
