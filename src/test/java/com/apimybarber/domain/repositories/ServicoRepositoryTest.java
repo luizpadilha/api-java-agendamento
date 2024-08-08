@@ -31,7 +31,7 @@ class ServicoRepositoryTest {
         User newUser = new User(login, "senha123", UserRole.ADMIN);
         this.salvarUser(newUser);
 
-        Servico servico = new Servico(null, "corte", 15.0, newUser, null);
+        Servico servico = new Servico(null, "corte", 15.0, newUser, null, null);
         this.salvarServico(servico);
 
         List<Servico> result = this.servicoRepository.findAllByUser_Id(newUser.getId());

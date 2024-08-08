@@ -144,4 +144,9 @@
                                  referencedTableName="users"
                                  referencedColumnNames="id"/>
     </changeSet>
+    <changeSet id="19" author="luizpadilha">
+        <addColumn tableName="servico">
+            <column name="fileimage" type="bytea"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalTime;
+import java.util.Base64;
 import java.util.List;
 
 @RestController
@@ -38,6 +39,7 @@ public class ServicoController {
                 if (serv.getTempo() != null) {
                     serv.setTempoHora(serv.getTempo().getHour());
                     serv.setTempoMinuto(serv.getTempo().getMinute());
+                    serv.setImageBase64(serv.getFileImage() == null ? null : Base64.getEncoder().encodeToString(serv.getFileImage()));
                 }
             });
             return ResponseEntity.ok(servicos);
@@ -54,6 +56,7 @@ public class ServicoController {
             if (servico.getTempo() != null) {
                 servico.setTempoHora(servico.getTempo().getHour());
                 servico.setTempoMinuto(servico.getTempo().getMinute());
+                servico.setImageBase64(servico.getFileImage() == null ? null : Base64.getEncoder().encodeToString(servico.getFileImage()));
             }
             return ResponseEntity.ok(servico);
         } catch (Exception ex) {
@@ -67,15 +70,17 @@ public class ServicoController {
     public ResponseEntity<String> salvarServico(@RequestBody ServicoVO data) {
         try {
             User user = userService.buscar(data.userId());
+            byte[] imageBytes = data.imageBase64() == null ? null : Base64.getDecoder().decode(data.imageBase64());
             if (user == null) return ResponseEntity.badRequest().build();
             Servico servico = service.buscar(data.id());
             LocalTime tempo = LocalTime.parse(data.tempo());
             if (servico == null) {
-                servico = new Servico(data.id(), data.descricao(), data.preco(), user, tempo);
+                servico = new Servico(data.id(), data.descricao(), data.preco(), user, tempo, imageBytes);
             } else {
                 servico.setDescricao(data.descricao());
                 servico.setPreco(data.preco());
                 servico.setTempo(tempo);
+                servico.setFileImage(imageBytes);
             }
             servico = service.gravar(servico);
             return ResponseEntity.ok(servico.getId());

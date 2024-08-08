@@ -73,6 +73,7 @@ class PessoaControllerTest {
         when(userService.buscar(idUser)).thenReturn(user);
         when(pessoaService.buscar(id)).thenReturn(pessoa);
         PessoaVO pessoaVO = new PessoaVO(id, pessoa.getNome(), pessoa.getNumero(), idUser);
+        when(pessoaService.gravar(pessoa)).thenReturn(pessoa);
 
         mockMvc.perform(post("/api/pessoa/salvar-pessoa")
                         .content(new ObjectMapper().writeValueAsString(pessoaVO))
@@ -90,17 +91,16 @@ class PessoaControllerTest {
     @Test
     void salvarPessoa_dadoPessoaVOInexistenteEUser_deveCriarPessoaESalvarERetornarStatusOk() throws Exception {
         when(userService.buscar(idUser)).thenReturn(user);
-        when(pessoaService.buscar(null)).thenReturn(null);
-        PessoaVO pessoaVO = new PessoaVO(null, pessoa.getNome(), pessoa.getNumero(), idUser);
+        PessoaVO pessoaVO = new PessoaVO(id, pessoa.getNome(), pessoa.getNumero(), idUser);
+        when(pessoaService.gravar(pessoa)).thenReturn(pessoa);
 
         mockMvc.perform(post("/api/pessoa/salvar-pessoa")
                         .content(new ObjectMapper().writeValueAsString(pessoaVO))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        Pessoa newPessoa = new Pessoa(pessoaVO.id(), pessoaVO.nome(), pessoaVO.numero(), user);
-        verify(pessoaService, times(1)).buscar(null);
-        verify(pessoaService, times(1)).gravar(newPessoa);
+        verify(pessoaService, times(1)).buscar(pessoaVO.id());
+        verify(pessoaService, times(1)).gravar(pessoa);
         verifyNoMoreInteractions(pessoaService);
 
     }
@@ -108,7 +108,7 @@ class PessoaControllerTest {
     @Test
     void salvarPessoa_dadoPessoaVOEUserNulo_deveRetornarStatusBad() throws Exception {
         when(userService.buscar(anyString())).thenReturn(null);
-        PessoaVO pessoaVO = new PessoaVO(null, pessoa.getNome(), pessoa.getNumero(), idUser);
+        PessoaVO pessoaVO = new PessoaVO("id1", pessoa.getNome(), pessoa.getNumero(), idUser);
 
         mockMvc.perform(post("/api/pessoa/salvar-pessoa")
                         .content(new ObjectMapper().writeValueAsString(pessoaVO))
