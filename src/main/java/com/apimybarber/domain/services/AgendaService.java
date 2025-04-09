@@ -18,8 +18,11 @@ import java.util.List;
 @Service
 public class AgendaService extends AbstractService<Agenda> {
 
-    @Autowired
-    private AgendaRepository repository;
+    private final AgendaRepository repository;
+
+    public AgendaService(AgendaRepository repository) {
+        this.repository = repository;
+    }
 
     public List<Agenda> findAllByUserIdAndHorario(String user_id, LocalDate horario) {
         return repository.findAllByUserIdAndHorario(user_id, LocalDateUtils.getDataFormatada(horario));

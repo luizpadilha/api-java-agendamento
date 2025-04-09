@@ -10,8 +10,11 @@ import java.util.List;
 @Service
 public class NotificacaoService extends AbstractService<Notificacao> {
 
-    @Autowired
-    private NotificacaoRepository repository;
+    private final NotificacaoRepository repository;
+
+    public NotificacaoService(NotificacaoRepository repository) {
+        this.repository = repository;
+    }
 
     public List<Notificacao> findAllByUser_Id(String username) {
         return repository.findAllByUser_Id(username);

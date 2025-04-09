@@ -15,10 +15,13 @@ import java.util.List;
 @Service
 public class ConfiguracaoService extends AbstractService<Configuracao> {
 
-    @Autowired
-    private ConfiguracaoRepository configuracaoRepository;
-    @Autowired
-    private ConfiguracaoExpedienteService configuracaoExpedienteService;
+    private final ConfiguracaoRepository configuracaoRepository;
+    private final ConfiguracaoExpedienteService configuracaoExpedienteService;
+
+    public ConfiguracaoService(ConfiguracaoRepository configuracaoRepository, ConfiguracaoExpedienteService configuracaoExpedienteService) {
+        this.configuracaoRepository = configuracaoRepository;
+        this.configuracaoExpedienteService = configuracaoExpedienteService;
+    }
 
     @Override
     public Configuracao gravar(Configuracao registro) {

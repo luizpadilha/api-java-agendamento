@@ -29,12 +29,15 @@ public class AuthenticationController {
 
     private Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private UserService service;
-    @Autowired
-    private TokenService tokenService;
+    private final AuthenticationManager authenticationManager;
+    private final UserService service;
+    private final TokenService tokenService;
+
+    public AuthenticationController(AuthenticationManager authenticationManager, UserService service, TokenService tokenService) {
+        this.authenticationManager = authenticationManager;
+        this.service = service;
+        this.tokenService = tokenService;
+    }
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity login(@RequestBody AuthenticationVO data) {

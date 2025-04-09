@@ -26,10 +26,13 @@ public class ConfiguracaoController {
 
     private Logger logger = LoggerFactory.getLogger(ConfiguracaoController.class);
 
-    @Autowired
-    private ConfiguracaoService configuracaoService;
-    @Autowired
-    private UserService userService;
+    private final ConfiguracaoService configuracaoService;
+    private final UserService userService;
+
+    public ConfiguracaoController(ConfiguracaoService configuracaoService, UserService userService) {
+        this.configuracaoService = configuracaoService;
+        this.userService = userService;
+    }
 
 
     @GetMapping(value = "/config")
