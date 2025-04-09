@@ -25,10 +25,13 @@ public class ServicoController {
 
     private Logger logger = LoggerFactory.getLogger(ServicoController.class);
 
-    @Autowired
-    private ServicoService service;
-    @Autowired
-    private UserService userService;
+    private final ServicoService service;
+    private final UserService userService;
+
+    public ServicoController(ServicoService service, UserService userService) {
+        this.service = service;
+        this.userService = userService;
+    }
 
 
     @GetMapping(value = "/servicos")

@@ -27,8 +27,11 @@ public class GraficoController {
 
     private Logger logger = LoggerFactory.getLogger(GraficoController.class);
 
-    @Autowired
-    private AgendaService agendaService;
+    private final AgendaService agendaService;
+
+    public GraficoController(AgendaService agendaService) {
+        this.agendaService = agendaService;
+    }
 
     @GetMapping(value = "/grafico-por-periodo")
     public ResponseEntity<List<GraficoVO>> graficoPorPeriodo(@RequestParam String userId,

@@ -24,10 +24,13 @@ public class NotificacaoController {
 
     private Logger logger = LoggerFactory.getLogger(NotificacaoController.class);
 
-    @Autowired
-    private NotificacaoService service;
-    @Autowired
-    private UserService userService;
+    private final NotificacaoService service;
+    private final UserService userService;
+
+    public NotificacaoController(NotificacaoService service, UserService userService) {
+        this.service = service;
+        this.userService = userService;
+    }
 
 
     @GetMapping(value = "/notificacoes")

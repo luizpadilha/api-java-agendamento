@@ -23,10 +23,13 @@ public class PessoaController {
 
     private Logger logger = LoggerFactory.getLogger(PessoaController.class);
 
-    @Autowired
-    private PessoaService service;
-    @Autowired
-    private UserService userService;
+    private final PessoaService service;
+    private final UserService userService;
+
+    public PessoaController(PessoaService service, UserService userService) {
+        this.service = service;
+        this.userService = userService;
+    }
 
 
     @GetMapping(value = "/pessoas")

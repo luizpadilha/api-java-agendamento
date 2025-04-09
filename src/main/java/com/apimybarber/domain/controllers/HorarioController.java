@@ -28,14 +28,17 @@ public class HorarioController {
 
     private Logger logger = LoggerFactory.getLogger(HorarioController.class);
 
-    @Autowired
-    private AgendaService agendaService;
-    @Autowired
-    private ServicoService servicoService;
-    @Autowired
-    private ConfiguracaoService configuracaoService;
-    @Autowired
-    private UserService userService;
+    private final AgendaService agendaService;
+    private final ServicoService servicoService;
+    private final ConfiguracaoService configuracaoService;
+    private final UserService userService;
+
+    public HorarioController(AgendaService agendaService, ServicoService servicoService, ConfiguracaoService configuracaoService, UserService userService) {
+        this.agendaService = agendaService;
+        this.servicoService = servicoService;
+        this.configuracaoService = configuracaoService;
+        this.userService = userService;
+    }
 
 
     @GetMapping(value = "/horarios-por-data")
@@ -47,10 +50,7 @@ public class HorarioController {
             List<Agenda> agendas = agendaService.findAllByUserIdAndHorario(userId, localDate);
             Servico servico = servicoService.buscar(servicoId);
             return ResponseEntity.ok(montarHorariosDisponiveis(servico.getTempo(), agendas, userId, localDate));
-        } catch (OutOfMemoryError e) {
-            logger.error("Erro: ", e);
-            return ResponseEntity.ok(new ArrayList<>());
-        } catch (Exception e) {
+        } catch (OutOfMemoryError | Exception e) {
             logger.error("Erro: ", e);
             return ResponseEntity.ok(new ArrayList<>());
         }

@@ -11,8 +11,11 @@ import java.util.List;
 @Service
 public class PessoaService extends AbstractService<Pessoa> {
 
-    @Autowired
-    private PessoaRepository repository;
+    private final PessoaRepository repository;
+
+    public PessoaService(PessoaRepository repository) {
+        this.repository = repository;
+    }
 
     public List<Pessoa> findAllByUser_Id(String username) {
         return repository.findAllByUser_Id(username);

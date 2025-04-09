@@ -31,14 +31,17 @@ public class AgendaController {
 
     private Logger logger = LoggerFactory.getLogger(AgendaController.class);
 
-    @Autowired
-    private AgendaService service;
-    @Autowired
-    private ServicoService servicoService;
-    @Autowired
-    private PessoaService pessoaService;
-    @Autowired
-    private UserService userService;
+    private final AgendaService service;
+    private final ServicoService servicoService;
+    private final PessoaService pessoaService;
+    private final UserService userService;
+
+    public AgendaController(AgendaService service, ServicoService servicoService, PessoaService pessoaService, UserService userService) {
+        this.service = service;
+        this.servicoService = servicoService;
+        this.pessoaService = pessoaService;
+        this.userService = userService;
+    }
 
 
     @GetMapping(value = "/agendas")

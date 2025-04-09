@@ -10,8 +10,11 @@ import java.util.List;
 @Service
 public class ServicoService extends AbstractService<Servico> {
 
-    @Autowired
-    private ServicoRepository repository;
+    private final ServicoRepository repository;
+
+    public ServicoService(ServicoRepository repository) {
+        this.repository = repository;
+    }
 
     public List<Servico> findAllByUser_Id(String username) {
         return repository.findAllByUser_Id(username);
