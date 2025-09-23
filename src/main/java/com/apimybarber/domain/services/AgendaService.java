@@ -3,10 +3,10 @@ package com.apimybarber.domain.services;
 
 import com.apimybarber.domain.entity.Agenda;
 import com.apimybarber.domain.enums.TipoPeriodo;
+import com.apimybarber.domain.services.interfaces.IAgendaService;
 import com.apimybarber.domain.repositories.AgendaRepository;
 import com.apimybarber.domain.utils.LocalDateUtils;
 import com.apimybarber.domain.viewobject.AgendaAgrupadaVO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class AgendaService extends AbstractService<Agenda> {
+public class AgendaService extends AbstractService<Agenda> implements IAgendaService {
 
     private final AgendaRepository repository;
 
@@ -24,14 +24,17 @@ public class AgendaService extends AbstractService<Agenda> {
         this.repository = repository;
     }
 
+    @Override
     public List<Agenda> findAllByUserIdAndHorario(String user_id, LocalDate horario) {
         return repository.findAllByUserIdAndHorario(user_id, LocalDateUtils.getDataFormatada(horario));
     }
 
+    @Override
     public List<Agenda> findAllByUserIdAndPessoa(String user_id, String pessoa_id) {
         return repository.findAllByUserIdAndPessoa(user_id, pessoa_id);
     }
 
+    @Override
     public List<AgendaAgrupadaVO> findAllAgrupadaByUserIdAndPeriodo(String username, LocalDate LocalDateInicial, LocalDate LocalDateFinal, TipoPeriodo tipoPeriodo) {
         List<AgendaAgrupadaVO> retorno = new ArrayList<>();
         List<Object[]> dados = new ArrayList<>();

@@ -1,18 +1,15 @@
 package com.apimybarber.domain.controllers;
 
 
-import com.apimybarber.domain.repositories.UserRepository;
-import com.apimybarber.domain.services.TokenService;
-import com.apimybarber.domain.services.UserService;
-import com.apimybarber.domain.viewobject.ResponseErroVO;
+import com.apimybarber.domain.entity.User;
+import com.apimybarber.domain.services.interfaces.ITokenService;
+import com.apimybarber.domain.services.interfaces.IUserService;
 import com.apimybarber.domain.viewobject.AuthenticationVO;
 import com.apimybarber.domain.viewobject.LoginResponseVO;
 import com.apimybarber.domain.viewobject.RegisterVO;
-import com.apimybarber.domain.entity.User;
-import jakarta.validation.Valid;
+import com.apimybarber.domain.viewobject.ResponseErroVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,19 +27,21 @@ public class AuthenticationController {
     private Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
 
     private final AuthenticationManager authenticationManager;
-    private final UserService service;
-    private final TokenService tokenService;
+    private final IUserService userService;
+    private final ITokenService tokenService;
 
-    public AuthenticationController(AuthenticationManager authenticationManager, UserService service, TokenService tokenService) {
+    public AuthenticationController(AuthenticationManager authenticationManager, IUserService userService, ITokenService tokenService) {
         this.authenticationManager = authenticationManager;
-        this.service = service;
+        this.userService = userService;
         this.tokenService = tokenService;
     }
+
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity login(@RequestBody AuthenticationVO data) {
         try {
-            if (this.service.loadUserByUsername(data.login()) == null) return ResponseEntity.ok(new ResponseErroVO("Usuário inexistente", 400));
+            if (this.userService.loadUserByUsername(data.login()) == null)
+                return ResponseEntity.ok(new ResponseErroVO("Usuário inexistente", 400));
 
             var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
             var auth = this.authenticationManager.authenticate(usernamePassword);
@@ -63,12 +62,12 @@ public class AuthenticationController {
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> register(@RequestBody RegisterVO data) {
         try {
-            if (this.service.loadUserByUsername(data.login()) != null) return ResponseEntity.badRequest().build();
+            if (this.userService.loadUserByUsername(data.login()) != null) return ResponseEntity.badRequest().build();
 
             String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
             User newUser = new User(data.login(), encryptedPassword, data.role());
 
-            this.service.gravar(newUser);
+            this.userService.gravar(newUser);
 
             return ResponseEntity.ok().build();
         } catch (Exception e) {

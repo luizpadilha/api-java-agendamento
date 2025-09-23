@@ -1,20 +1,17 @@
 package com.apimybarber.domain.controllers;
 
 import com.apimybarber.domain.entity.Servico;
-import com.apimybarber.domain.entity.User;
-import com.apimybarber.domain.services.ServicoService;
-import com.apimybarber.domain.services.UserService;
+import com.apimybarber.domain.entity.mappers.ServicoMapper;
+import com.apimybarber.domain.services.interfaces.IServicoService;
 import com.apimybarber.domain.viewobject.ServicoVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalTime;
 import java.util.Base64;
 import java.util.List;
 
@@ -25,14 +22,13 @@ public class ServicoController {
 
     private Logger logger = LoggerFactory.getLogger(ServicoController.class);
 
-    private final ServicoService service;
-    private final UserService userService;
+    private final IServicoService service;
+    private final ServicoMapper servicoMapper;
 
-    public ServicoController(ServicoService service, UserService userService) {
+    public ServicoController(IServicoService service, ServicoMapper servicoMapper) {
         this.service = service;
-        this.userService = userService;
+        this.servicoMapper = servicoMapper;
     }
-
 
     @GetMapping(value = "/servicos")
     public ResponseEntity<List<Servico>> servicos(@RequestParam String userId) {
@@ -72,18 +68,10 @@ public class ServicoController {
     @PostMapping(value = "/salvar-servico", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> salvarServico(@RequestBody ServicoVO data) {
         try {
-            User user = userService.buscar(data.userId());
-            byte[] imageBytes = data.imageBase64() == null ? null : Base64.getDecoder().decode(data.imageBase64());
-            if (user == null) return ResponseEntity.badRequest().build();
             Servico servico = service.buscar(data.id());
-            LocalTime tempo = LocalTime.parse(data.tempo());
+            servico = servicoMapper.toEntity(data, servico);
             if (servico == null) {
-                servico = new Servico(data.id(), data.descricao(), data.preco(), user, tempo, imageBytes);
-            } else {
-                servico.setDescricao(data.descricao());
-                servico.setPreco(data.preco());
-                servico.setTempo(tempo);
-                servico.setFileImage(imageBytes);
+                return ResponseEntity.badRequest().build();
             }
             servico = service.gravar(servico);
             return ResponseEntity.ok(servico.getId());

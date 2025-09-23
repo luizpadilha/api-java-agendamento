@@ -5,39 +5,28 @@ import com.apimybarber.domain.entity.ConfiguracaoExpediente;
 import com.apimybarber.domain.entity.User;
 import com.apimybarber.domain.enums.DiaSemana;
 import com.apimybarber.domain.repositories.ConfiguracaoRepository;
+import com.apimybarber.domain.services.interfaces.IConfiguracaoService;
 import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
 import java.util.List;
 
 @Service
-public class ConfiguracaoService extends AbstractService<Configuracao> {
+public class ConfiguracaoService extends AbstractService<Configuracao> implements IConfiguracaoService {
 
     private final ConfiguracaoRepository configuracaoRepository;
-    private final ConfiguracaoExpedienteService configuracaoExpedienteService;
+    private final UserService userService;
 
-    public ConfiguracaoService(ConfiguracaoRepository configuracaoRepository, ConfiguracaoExpedienteService configuracaoExpedienteService) {
+
+    public ConfiguracaoService(ConfiguracaoRepository configuracaoRepository, UserService userService) {
         this.configuracaoRepository = configuracaoRepository;
-        this.configuracaoExpedienteService = configuracaoExpedienteService;
+        this.userService = userService;
     }
 
     @Override
     public Configuracao gravar(Configuracao registro) {
         return configuracaoRepository.save(registro);
-    }
-
-    public ConfiguracaoExpediente gravarConfiguracaoExpediente(ConfiguracaoExpediente configuracaoExpediente) {
-        return configuracaoExpedienteService.gravar(configuracaoExpediente);
-    }
-
-    public void excluirConfiguracaoExpediente(String id) {
-        configuracaoExpedienteService.excluir(id);
-    }
-
-    public ConfiguracaoExpediente buscarConfiguracaoExpediente(String id) {
-        return configuracaoExpedienteService.buscar(id);
     }
 
     @Override
@@ -50,19 +39,23 @@ public class ConfiguracaoService extends AbstractService<Configuracao> {
         configuracaoRepository.deleteById(id);
     }
 
+    @Override
     public List<Configuracao> findAllByUser_Id(String id_user) {
         List<Configuracao> configs = configuracaoRepository.findAllByUser_Id(id_user);
         configs.forEach(this::inicializarListas);
         return configs;
     }
 
+    @Override
     public Configuracao inicializarListas(Configuracao configuracao) {
         if (configuracao == null) return null;
         Hibernate.initialize(configuracao.getExpedientes());
         return configuracao;
     }
 
-    public Configuracao criarConfiguracaoPadrao(User user) {
+    @Override
+    public Configuracao criarConfiguracaoPadrao(String userId) {
+        User user = userService.buscar(userId);
         Configuracao configuracao = new Configuracao(user);
         for (DiaSemana diaSemana : DiaSemana.values()) {
             LocalTime inicioExpediente = LocalTime.parse("08:00");
@@ -73,9 +66,5 @@ public class ConfiguracaoService extends AbstractService<Configuracao> {
             configuracao.getExpedientes().add(configuracaoExpediente);
         }
         return gravar(configuracao);
-    }
-
-    public ConfiguracaoExpediente buscarConfiguracaoExpedientePorConfiguracaoEDiaSemana(String configuracao_id, DiaSemana diaSemana) {
-        return configuracaoExpedienteService.buscarConfiguracaoExpedientePorConfiguracaoEDiaSemana(configuracao_id, diaSemana);
     }
 }

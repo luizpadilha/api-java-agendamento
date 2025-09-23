@@ -1,6 +1,7 @@
 package com.apimybarber.domain.controllers;
 
 import com.apimybarber.domain.entity.*;
+import com.apimybarber.domain.entity.mappers.AgendaMapper;
 import com.apimybarber.domain.services.AgendaService;
 import com.apimybarber.domain.services.PessoaService;
 import com.apimybarber.domain.services.ServicoService;
@@ -46,6 +47,8 @@ class AgendaControllerTest {
     private PessoaService pessoaService;
     @Mock
     private AgendaService agendaService;
+    @Mock
+    private AgendaMapper agendaMapper;
     @Spy
     @InjectMocks
     private AgendaController agendaController;
@@ -100,6 +103,7 @@ class AgendaControllerTest {
         PessoaVO pessoaVO = new PessoaVO(idPes, pessoa.getNome(), pessoa.getNumero(), idUser);
         AgendaVO agendaVO = new AgendaVO(id, LocalDateUtils.getLocalDateStringIso(horario), servicoVO, pessoaVO, idUser);
 
+        when(agendaMapper.toEntity(agendaVO, agenda)).thenReturn(agenda);
         mockMvc.perform(post("/api/agenda/salvar-agenda")
                         .content(new ObjectMapper().writeValueAsString(agendaVO))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -108,8 +112,6 @@ class AgendaControllerTest {
         agenda.setPessoa(pessoa);
         agenda.setServico(servico);
         agenda.setHorario(horario);
-        verify(servicoService, times(1)).buscar(idServ);
-        verify(pessoaService, times(1)).buscar(idPes);
         verify(agendaService, times(1)).buscar(id);
         verify(agendaService, times(1)).gravar(agenda);
         verifyNoMoreInteractions(agendaService);
@@ -125,14 +127,13 @@ class AgendaControllerTest {
         PessoaVO pessoaVO = new PessoaVO(idPes, pessoa.getNome(), pessoa.getNumero(), idUser);
         AgendaVO agendaVO = new AgendaVO(id, LocalDateUtils.getLocalDateStringIso(horario), servicoVO, pessoaVO, idUser);
 
+        Agenda newAgenda = new Agenda(id, pessoa, servico, user, horario);
+        when(agendaMapper.toEntity(agendaVO, null)).thenReturn(newAgenda);
         mockMvc.perform(post("/api/agenda/salvar-agenda")
                         .content(new ObjectMapper().writeValueAsString(agendaVO))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        Agenda newAgenda = new Agenda(id, pessoa, servico, user, horario);
-        verify(servicoService, times(1)).buscar(idServ);
-        verify(pessoaService, times(1)).buscar(idPes);
         verify(agendaService, times(1)).buscar(id);
         verify(agendaService, times(1)).gravar(newAgenda);
         verifyNoMoreInteractions(agendaService);
@@ -147,18 +148,18 @@ class AgendaControllerTest {
         ServicoVO servicoVO = new ServicoVO(idServ, servico.getDescricao(), servico.getPreco(), idUser, servico.getTempo().format(DateTimeFormatter.ISO_TIME), null);
         PessoaVO pessoaVO = new PessoaVO(idPes, pessoa.getNome(), pessoa.getNumero(), idUser);
         AgendaVO agendaVO = new AgendaVO(id, LocalDateUtils.getLocalDateStringIso(horario), servicoVO, pessoaVO, idUser);
+        Pessoa newPessoa = new Pessoa(idPes, agendaVO.pessoa().nome(), agendaVO.pessoa().numero(), user);
 
+        LocalTime tempo = LocalTime.parse(servicoVO.tempo());
+        Servico newServico = new Servico(idServ, agendaVO.servico().descricao(), agendaVO.servico().preco(), user, tempo, null);
+        Agenda newAgenda = new Agenda(id, newPessoa, newServico, user, horario);
+        when(agendaMapper.toEntity(agendaVO, null)).thenReturn(newAgenda);
         mockMvc.perform(post("/api/agenda/salvar-agenda")
                         .content(new ObjectMapper().writeValueAsString(agendaVO))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        Pessoa newPessoa = new Pessoa(idPes, agendaVO.pessoa().nome(), agendaVO.pessoa().numero(), user);
-        LocalTime tempo = LocalTime.parse(servicoVO.tempo());
-        Servico newServico = new Servico(idServ, agendaVO.servico().descricao(), agendaVO.servico().preco(), user, tempo, null);
-        Agenda newAgenda = new Agenda(id, newPessoa, newServico, user, horario);
-        verify(servicoService, times(1)).buscar(idServ);
-        verify(pessoaService, times(1)).buscar(idPes);
+
         verify(agendaService, times(1)).buscar(id);
         verify(agendaService, times(1)).gravar(newAgenda);
         verifyNoMoreInteractions(agendaService);
