@@ -1,27 +1,21 @@
 package com.apimybarber.domain.controllers;
 
 import com.apimybarber.domain.entity.Agenda;
-import com.apimybarber.domain.entity.Pessoa;
 import com.apimybarber.domain.entity.Servico;
 import com.apimybarber.domain.entity.User;
-import com.apimybarber.domain.services.AgendaService;
-import com.apimybarber.domain.services.PessoaService;
-import com.apimybarber.domain.services.ServicoService;
-import com.apimybarber.domain.services.UserService;
+import com.apimybarber.domain.services.interfaces.IAgendaService;
+import com.apimybarber.domain.services.interfaces.IUserService;
+import com.apimybarber.domain.entity.mappers.AgendaMapper;
 import com.apimybarber.domain.utils.LocalDateUtils;
 import com.apimybarber.domain.viewobject.AgendaVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Base64;
 import java.util.List;
 
 @RestController
@@ -31,16 +25,14 @@ public class AgendaController {
 
     private Logger logger = LoggerFactory.getLogger(AgendaController.class);
 
-    private final AgendaService service;
-    private final ServicoService servicoService;
-    private final PessoaService pessoaService;
-    private final UserService userService;
+    private final IAgendaService service;
+    private final IUserService userService;
+    private final AgendaMapper agendaMapper;
 
-    public AgendaController(AgendaService service, ServicoService servicoService, PessoaService pessoaService, UserService userService) {
+    public AgendaController(IAgendaService service, IUserService userService, AgendaMapper agendaMapper) {
         this.service = service;
-        this.servicoService = servicoService;
-        this.pessoaService = pessoaService;
         this.userService = userService;
+        this.agendaMapper = agendaMapper;
     }
 
 
@@ -85,24 +77,7 @@ public class AgendaController {
             User user = userService.buscar(data.userId());
             if (user == null) return ResponseEntity.badRequest().build();
             Agenda agenda = service.buscar(data.id());
-            Pessoa pessoa = pessoaService.buscar(data.pessoa().id());
-            Servico servico = servicoService.buscar(data.servico().id());
-            if (pessoa == null) {
-                pessoa = new Pessoa(data.id(), data.pessoa().nome(), data.pessoa().numero(), user);
-            }
-            if (servico == null) {
-                LocalTime tempo = LocalTime.parse(data.servico().tempo());
-                byte[] imageBytesServico = data.servico().imageBase64() == null ? null : Base64.getDecoder().decode(data.servico().imageBase64());
-                servico = new Servico(data.id(), data.servico().descricao(), data.servico().preco(), user, tempo, imageBytesServico);
-            }
-            LocalDateTime horario = LocalDateUtils.getLocalDateTimeIso(data.horarioToIso8601());
-            if (agenda == null) {
-                agenda = new Agenda(data.id(), pessoa, servico, user, horario);
-            } else {
-                agenda.setPessoa(pessoa);
-                agenda.setServico(servico);
-                agenda.setHorario(horario);
-            }
+            agenda = agendaMapper.toEntity(data, agenda);
             service.gravar(agenda);
             return ResponseEntity.ok().build();
         } catch (Exception e) {

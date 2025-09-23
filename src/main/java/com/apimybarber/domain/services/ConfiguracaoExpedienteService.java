@@ -2,14 +2,12 @@ package com.apimybarber.domain.services;
 
 import com.apimybarber.domain.entity.ConfiguracaoExpediente;
 import com.apimybarber.domain.enums.DiaSemana;
+import com.apimybarber.domain.services.interfaces.IConfiguracaoExpedienteService;
 import com.apimybarber.domain.repositories.ConfiguracaoExpedienteRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
-public class ConfiguracaoExpedienteService extends AbstractService<ConfiguracaoExpediente> {
+public class ConfiguracaoExpedienteService extends AbstractService<ConfiguracaoExpediente> implements IConfiguracaoExpedienteService {
 
     private final ConfiguracaoExpedienteRepository configuracaoExpedienteRepository;
 
@@ -32,6 +30,7 @@ public class ConfiguracaoExpedienteService extends AbstractService<ConfiguracaoE
         configuracaoExpedienteRepository.deleteById(id);
     }
 
+    @Override
     public ConfiguracaoExpediente buscarConfiguracaoExpedientePorConfiguracaoEDiaSemana(String configuracao_id, DiaSemana diaSemana) {
         return configuracaoExpedienteRepository.findAllByConfiguracao_IdAndDiaSemana(configuracao_id, diaSemana).stream().findFirst().orElse(null);
     }

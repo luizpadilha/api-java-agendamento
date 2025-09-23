@@ -1,14 +1,14 @@
 package com.apimybarber.domain.services;
 
 import com.apimybarber.domain.entity.Notificacao;
+import com.apimybarber.domain.services.interfaces.INotificacaoService;
 import com.apimybarber.domain.repositories.NotificacaoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class NotificacaoService extends AbstractService<Notificacao> {
+public class NotificacaoService extends AbstractService<Notificacao> implements INotificacaoService {
 
     private final NotificacaoRepository repository;
 
@@ -16,6 +16,7 @@ public class NotificacaoService extends AbstractService<Notificacao> {
         this.repository = repository;
     }
 
+    @Override
     public List<Notificacao> findAllByUser_Id(String username) {
         return repository.findAllByUser_Id(username);
     }

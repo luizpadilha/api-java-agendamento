@@ -2,14 +2,14 @@ package com.apimybarber.domain.services;
 
 
 import com.apimybarber.domain.entity.Pessoa;
+import com.apimybarber.domain.services.interfaces.IPessoaService;
 import com.apimybarber.domain.repositories.PessoaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class PessoaService extends AbstractService<Pessoa> {
+public class PessoaService extends AbstractService<Pessoa> implements IPessoaService {
 
     private final PessoaRepository repository;
 
@@ -17,6 +17,7 @@ public class PessoaService extends AbstractService<Pessoa> {
         this.repository = repository;
     }
 
+    @Override
     public List<Pessoa> findAllByUser_Id(String username) {
         return repository.findAllByUser_Id(username);
     }
