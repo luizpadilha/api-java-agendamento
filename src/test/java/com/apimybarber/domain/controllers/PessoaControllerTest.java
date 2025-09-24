@@ -3,6 +3,7 @@ package com.apimybarber.domain.controllers;
 import com.apimybarber.domain.entity.Pessoa;
 import com.apimybarber.domain.entity.User;
 import com.apimybarber.domain.entity.UserRole;
+import com.apimybarber.domain.entity.mappers.PessoaMapper;
 import com.apimybarber.domain.services.PessoaService;
 import com.apimybarber.domain.services.UserService;
 import com.apimybarber.domain.viewobject.PessoaVO;
@@ -31,6 +32,8 @@ class PessoaControllerTest {
     private MockMvc mockMvc;
     @Mock
     private PessoaService pessoaService;
+    @Mock
+    private PessoaMapper pessoaMapper;
     @Mock
     private UserService userService;
     @Spy
@@ -75,13 +78,12 @@ class PessoaControllerTest {
         PessoaVO pessoaVO = new PessoaVO(id, pessoa.getNome(), pessoa.getNumero(), idUser);
         when(pessoaService.gravar(pessoa)).thenReturn(pessoa);
 
+        when(pessoaMapper.toEntity(pessoaVO, pessoa)).thenReturn(pessoa);
         mockMvc.perform(post("/api/pessoa/salvar-pessoa")
                         .content(new ObjectMapper().writeValueAsString(pessoaVO))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        pessoa.setNome(pessoaVO.nome());
-        pessoa.setNumero(pessoaVO.numero());
         verify(pessoaService, times(1)).buscar(id);
         verify(pessoaService, times(1)).gravar(pessoa);
         verifyNoMoreInteractions(pessoaService);
@@ -94,6 +96,7 @@ class PessoaControllerTest {
         PessoaVO pessoaVO = new PessoaVO(id, pessoa.getNome(), pessoa.getNumero(), idUser);
         when(pessoaService.gravar(pessoa)).thenReturn(pessoa);
 
+        when(pessoaMapper.toEntity(pessoaVO, null)).thenReturn(pessoa);
         mockMvc.perform(post("/api/pessoa/salvar-pessoa")
                         .content(new ObjectMapper().writeValueAsString(pessoaVO))
                         .contentType(MediaType.APPLICATION_JSON))
