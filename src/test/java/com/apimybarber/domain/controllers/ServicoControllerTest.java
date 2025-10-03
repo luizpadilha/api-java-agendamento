@@ -3,6 +3,7 @@ package com.apimybarber.domain.controllers;
 import com.apimybarber.domain.entity.Servico;
 import com.apimybarber.domain.entity.User;
 import com.apimybarber.domain.entity.UserRole;
+import com.apimybarber.domain.entity.mappers.ServicoMapper;
 import com.apimybarber.domain.services.ServicoService;
 import com.apimybarber.domain.services.UserService;
 import com.apimybarber.domain.viewobject.ServicoVO;
@@ -35,6 +36,8 @@ class ServicoControllerTest {
     private ServicoService servicoService;
     @Mock
     private UserService userService;
+    @Mock
+    private ServicoMapper servicoMapper;
     @Spy
     @InjectMocks
     private ServicoController servicoController;
@@ -77,13 +80,12 @@ class ServicoControllerTest {
         when(servicoService.gravar(servico)).thenReturn(servico);
         ServicoVO servicoVO = new ServicoVO(id, servico.getDescricao(), servico.getPreco(), idUser, servico.getTempo().format(DateTimeFormatter.ISO_TIME), null);
 
+        when(servicoMapper.toEntity(servicoVO, servico)).thenReturn(servico);
         mockMvc.perform(post("/api/servico/salvar-servico")
                         .content(new ObjectMapper().writeValueAsString(servicoVO))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        servico.setDescricao(servicoVO.descricao());
-        servico.setPreco(servicoVO.preco());
         verify(servicoService, times(1)).buscar(id);
         verify(servicoService, times(1)).gravar(servico);
         verifyNoMoreInteractions(servicoService);
@@ -93,10 +95,10 @@ class ServicoControllerTest {
     @Test
     void salvarServico_dadoServicoVOInexistenteEUser_deveCriarServicoESalvarERetornarStatusOk() throws Exception {
         when(userService.buscar(idUser)).thenReturn(user);
-        when(servicoService.buscar(id)).thenReturn(servico);
         when(servicoService.gravar(servico)).thenReturn(servico);
         ServicoVO servicoVO = new ServicoVO(id, servico.getDescricao(), servico.getPreco(), idUser, servico.getTempo().format(DateTimeFormatter.ISO_TIME), null);
 
+        when(servicoMapper.toEntity(servicoVO, null)).thenReturn(servico);
         mockMvc.perform(post("/api/servico/salvar-servico")
                         .content(new ObjectMapper().writeValueAsString(servicoVO))
                         .contentType(MediaType.APPLICATION_JSON))
